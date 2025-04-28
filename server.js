@@ -251,17 +251,34 @@ app.post('/fix', async (req, res) => {
 
 app.post('/analyze', (req, res) => {
     try {
+        console.log('Received analyze request');
         const { html, request } = req.body;
         
         if (!html) {
+            console.log('No HTML content provided');
             return res.status(400).json({ error: 'HTML content is required' });
         }
 
+        console.log('Processing HTML analysis');
         const result = analyzeHtml(html, request);
-        res.json(result);
+        console.log('Analysis complete, sending response');
+        
+        const response = {
+            correctedHtml: result.correctedHtml || html,
+            additions: result.additions || [],
+            deletions: result.deletions || []
+        };
+        
+        console.log('Response:', JSON.stringify(response, null, 2));
+        res.json(response);
     } catch (error) {
         console.error('Error processing request:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ 
+            error: 'Internal server error',
+            correctedHtml: html,
+            additions: [],
+            deletions: []
+        });
     }
 });
 
