@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>HTML Assistant</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;    /* Dark blue */
+            --secondary: #1d4ed8;   /* Slightly lighter blue */
+            --background: #f8fafc;
+            --text: #1e293b;
+            --success: #059669;
+            --error: #dc2626;
+            --accent: #2563eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            background-image: url('https://i.postimg.cc/15CVbhXw/white-fabric-texture-background-885800-5595.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.postimg.cc/15CVbhXw/white-fabric-texture-background-885800-5595.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        .title {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(30, 58, 138, 0.1),
+                       3px 3px 6px rgba(30, 58, 138, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-html {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .title-assistant {
+            font-family: 'Brush Script MT', 'Brush Script Std', cursive;
+            font-size: 3.5rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: rgba(248, 250, 252, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-family: 'Monaco', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+            resize: vertical;
+        }
+
+        .ai-request {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-top: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, .ai-request:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .fix-button {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.1),
+                      0 2px 4px -1px rgba(30, 58, 138, 0.06);
+        }
+
+        .fix-button:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .changes-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .change-item {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+
+        .addition {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .deletion {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+
+        .preview-container {
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 300px;
+            overflow: auto;
+        }
+
+        .preview-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: #e2e8f0;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preview-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">
+        <span class="title-html">HTML</span> 
+        <span class="title-assistant">Assistant</span>
+    </h1>
+    
+    <div class="container">
+        <div class="input-section">
+            <h2 class="section-title">Input HTML</h2>
+            <textarea id="input" placeholder="Paste your HTML code here..."></textarea>
+            <input type="text" 
+                   id="ai-request" 
+                   class="ai-request" 
+                   placeholder="Ask AI to modify the HTML (e.g., 'Please fix the color in the code' or 'Add a table')">
+            <div class="button-container">
+                <button onclick="fixHTML()" class="fix-button">Fix HTML</button>
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <div class="panel">
+                <h2 class="section-title">Corrected HTML</h2>
+                <textarea id="output" readonly></textarea>
+            </div>
+
+            <div class="panel">
+                <h2 class="section-title">Preview</h2>
+                <div class="preview-tabs">
+                    <button class="preview-tab active" onclick="switchPreview('desktop')">Desktop</button>
+                    <button class="preview-tab" onclick="switchPreview('mobile')">Mobile</button>
+                </div>
+                <div id="preview" class="preview-container"></div>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top: 2rem;">
+            <h2 class="section-title">Changes Made</h2>
+            <div id="changes">
+                <ul class="changes-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('input').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                fixHTML();
+            }
+        });
+
+        function fixHTML() {
+            const input = document.getElementById('input').value;
+            const aiRequest = document.getElementById('ai-request').value;
+            const output = document.getElementById('output');
+            const changes = document.getElementById('changes').querySelector('.changes-list');
+            const preview = document.getElementById('preview');
+            
+            if (!input.trim()) {
+                alert('Please paste some HTML code first.');
+                return;
+            }
+            
+            output.value = 'Processing...';
+            changes.innerHTML = '<div style="color: var(--primary)">Processing...</div>';
+            preview.innerHTML = '<div style="color: var(--primary)">Loading preview...</div>';
+            
+            fetch('/fix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    html: input,
+                    ai_request: aiRequest
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    output.value = 'Error: ' + data.error;
+                    changes.innerHTML = '<div style="color: var(--error)">Error occurred</div>';
+                    preview.innerHTML = '<div style="color: var(--error)">Preview not available</div>';
+                } else {
+                    output.value = data.corrected;
+                    displayChanges(data.changes);
+                    preview.innerHTML = data.corrected;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                output.value = 'Error: ' + error.message;
+                changes.innerHTML = '<div style="color: var(--error)">Error occurred</div>';
+                preview.innerHTML = '<div style="color: var(--error)">Preview not available</div>';
+            });
+        }
+
+        function displayChanges(changes) {
+            const changesList = document.getElementById('changes').querySelector('.changes-list');
+            changesList.innerHTML = '';
+            
+            if (changes.additions && changes.additions.length > 0) {
+                changes.additions.forEach(addition => {
+                    const li = document.createElement('li');
+                    li.className = 'change-item addition';
+                    li.textContent = '+ ' + addition;
+                    changesList.appendChild(li);
+                });
+            }
+            
+            if (changes.deletions && changes.deletions.length > 0) {
+                changes.deletions.forEach(deletion => {
+                    const li = document.createElement('li');
+                    li.className = 'change-item deletion';
+                    li.textContent = '- ' + deletion;
+                    changesList.appendChild(li);
+                });
+            }
+            
+            if (!changes.additions?.length && !changes.deletions?.length) {
+                changesList.innerHTML = '<div style="color: var(--success)">No changes needed</div>';
+            }
+        }
+
+        function switchPreview(view) {
+            const preview = document.getElementById('preview');
+            const tabs = document.querySelectorAll('.preview-tab');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'mobile') {
+                preview.style.maxWidth = '375px';
+                preview.style.margin = '0 auto';
+            } else {
+                preview.style.maxWidth = 'none';
+                preview.style.margin = '0';
+            }
+        }
+    </script>
+</body>
+</html>
