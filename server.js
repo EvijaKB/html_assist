@@ -265,7 +265,7 @@ app.post('/analyze', (req, res) => {
     }
 });
 
-app.post('/analyze', async (req, res) => {
+app.post('/analyze-code', async (req, res) => {
     try {
         const { code } = req.body;
 
@@ -293,9 +293,13 @@ app.post('/analyze', async (req, res) => {
             temperature: 0.2
         });
 
-        res.json({ result: response.choices[0].message.content });
+        res.json({ 
+            correctedHtml: response.choices[0].message.content,
+            additions: [],
+            deletions: []
+        });
     } catch (error) {
-        console.error("Error in /analyze route:", error);
+        console.error("Error in /analyze-code route:", error);
         res.status(500).json({ error: error.message });
     }
 });
