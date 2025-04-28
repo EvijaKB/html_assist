@@ -50,12 +50,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const errorText = await response.text();
+                throw new Error(`Server responded with status ${response.status}: ${errorText}`);
             }
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (error) {
+                console.error('JSON parsing error:', error);
+                throw new Error('Invalid response format from server. Please check server logs.');
+            }
             
             // Display the corrected HTML
+            if (!data.correctedHtml) {
+                throw new Error('Server response missing correctedHtml field');
+            }
             correctedHtml.textContent = data.correctedHtml;
             
             // Display changes
