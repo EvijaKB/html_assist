@@ -8,13 +8,12 @@ const path = require('path');
 require('dotenv').config({ path: 'api_key.env' });
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Initialize OpenAI client
 const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) {
     throw new Error("OPENAI_API_KEY not found in api_key.env file");
@@ -24,18 +23,15 @@ const client = new OpenAI({
     apiKey: apiKey
 });
 
-// Function to analyze and modify HTML based on request
 function analyzeHtml(html, request) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     
-    // Example analysis and modifications based on request
     let changes = {
         additions: [],
         deletions: []
     };
 
-    // Add meta viewport tag if missing
     if (!document.querySelector('meta[name="viewport"]')) {
         const meta = document.createElement('meta');
         meta.setAttribute('name', 'viewport');
@@ -44,7 +40,6 @@ function analyzeHtml(html, request) {
         changes.additions.push('Added viewport meta tag for responsive design');
     }
 
-    // Add alt attributes to images if missing
     const images = document.querySelectorAll('img');
     images.forEach(img => {
         if (!img.hasAttribute('alt')) {
@@ -53,15 +48,12 @@ function analyzeHtml(html, request) {
         }
     });
 
-    // Add lang attribute to html tag if missing
     if (!document.documentElement.hasAttribute('lang')) {
         document.documentElement.setAttribute('lang', 'en');
         changes.additions.push('Added lang attribute to HTML tag');
     }
 
-    // Process the user's specific request
     if (request.toLowerCase().includes('add')) {
-        // Example: Add a new div with some content
         const newDiv = document.createElement('div');
         newDiv.className = 'new-content';
         newDiv.textContent = 'New content added based on your request';
@@ -70,7 +62,6 @@ function analyzeHtml(html, request) {
     }
 
     if (request.toLowerCase().includes('remove')) {
-        // Example: Remove empty paragraphs
         const paragraphs = document.querySelectorAll('p');
         paragraphs.forEach(p => {
             if (!p.textContent.trim()) {
@@ -98,19 +89,8 @@ async function processAIRequest(htmlInput, aiRequest) {
         User Request:
         ${aiRequest}
 
-        Please analyze the HTML and the user's request carefully. The request might include:
-        - Adding elements at specific locations
-        - Modifying existing elements
-        - Changing styles or content
-        - Adding new sections
-
-        Return only the modified HTML code that implements the user's request. Make sure to:
-        1. Preserve the original HTML structure
-        2. Place new elements exactly where requested
-        3. Maintain proper HTML formatting
-        4. Keep all existing functionality
-
-        Modified HTML:
+        Please analyze the HTML and the user's request carefully...
+        Return only the modified HTML code that implements the user's request.
         `;
 
         const response = await client.chat.completions.create({
@@ -134,17 +114,14 @@ function cleanHTML(htmlInput) {
         const dom = new JSDOM(htmlInput);
         const document = dom.window.document;
 
-        // Fix common issues
         const elements = document.querySelectorAll('*');
         elements.forEach(element => {
-            // Remove empty attributes
             Array.from(element.attributes).forEach(attr => {
                 if (!attr.value) {
                     element.removeAttribute(attr.name);
                 }
             });
 
-            // Ensure proper closing of void elements
             if (['img', 'br', 'hr', 'input', 'meta', 'link'].includes(element.tagName.toLowerCase())) {
                 if (!element.outerHTML.endsWith('/>')) {
                     element.outerHTML = element.outerHTML.replace('>', '/>');
@@ -321,7 +298,7 @@ app.post('/analyze-code', async (req, res) => {
     }
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-}); 
+// Start server with dynamic port for Render
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
