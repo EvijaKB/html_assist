@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         result.classList.add('hidden');
 
         try {
-            const response = await fetch('http://localhost:3000/analyze', {
+            const response = await fetch('https://html-assist.onrender.com', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
